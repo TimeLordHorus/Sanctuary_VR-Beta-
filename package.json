@@ -1,0 +1,51 @@
+{
+  "name": "sanctuary-vr-beta",
+  "version": "0.1.0",
+  "description": "Open source VR environment with cross-platform compatibility",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:web": "vite --config vite.config.web.js",
+    "dev:desktop": "vite --config vite.config.desktop.js",
+    "build": "vite build",
+    "build:web": "vite build --config vite.config.web.js",
+    "build:desktop": "vite build --config vite.config.desktop.js",
+    "preview": "vite preview",
+    "test": "vitest",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\""
+  },
+  "keywords": [
+    "vr",
+    "webxr",
+    "openxr",
+    "aframe",
+    "threejs",
+    "virtual-reality",
+    "sanctuary",
+    "open-source"
+  ],
+  "author": "Sanctuary VR Team",
+  "license": "MIT",
+  "dependencies": {
+    "aframe": "^1.5.0",
+    "aframe-extras": "^7.2.0",
+    "aframe-environment-component": "^1.3.3",
+    "three": "^0.160.0",
+    "@webxr-input-profiles/motion-controllers": "^1.0.0",
+    "cannon-es": "^0.20.0",
+    "howler": "^2.2.4"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "@vitejs/plugin-legacy": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

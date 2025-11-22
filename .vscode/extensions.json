@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "formulahendry.auto-rename-tag",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.live-server",
+    "ritwickdey.liveserver",
+    "slevesque.shader",
+    "raczzalan.webgl-glsl-editor",
+    "dtoplak.vscode-glsllint",
+    "ілиякирова.unity-snippets",
+    "ms-dotnettools.csharp"
+  ],
+  "unwantedRecommendations": []
+}
