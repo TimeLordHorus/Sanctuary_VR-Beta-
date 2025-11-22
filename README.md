@@ -13,6 +13,11 @@ Sanctuary VR is a flexible, cross-platform virtual reality environment designed 
   - Password protection with anti-brute-force lockout
   - Human verification mini-game (sanctuary stone pattern)
   - Audio feedback and particle effects
+- **Comprehensive Onboarding Tutorial**: 18-step interactive guide featuring:
+  - HUD walkthrough with visual highlighting
+  - Voice creation system demonstration
+  - Full showcase of creation capabilities
+  - Keyboard shortcuts and VR controls
 - **Beautiful HUD System**: Stunning glassmorphism UI with smooth animations and particle effects
 - **Multiplayer Support**:
   - Local Play: Solo exploration
