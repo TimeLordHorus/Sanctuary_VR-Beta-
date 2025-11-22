@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added (Latest)
+- **Comprehensive Onboarding Tutorial** (18 steps)
+  - Interactive walkthrough of HUD and all features
+  - Voice creation system demonstration with live examples
+  - Creation capabilities showcase (6 categories)
+  - Voice command examples for environments, objects, lighting, audio, interactions, effects
+  - VR and desktop control guides
+  - Visual highlighting with spotlight and tooltips
+  - Skip/replay options with LocalStorage persistence
+  - Keyboard navigation support
 - **Interactive Boot Screen** with multi-phase security
   - Phase 1: Animated system initialization with sanctuary mandala
   - Phase 2: Password protection with anti-brute-force lockout
