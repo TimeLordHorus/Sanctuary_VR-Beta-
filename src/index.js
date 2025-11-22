@@ -9,6 +9,7 @@ import { VRCompatibilityLayer } from './core/VRCompatibilityLayer.js';
 import { SceneManager } from './scenes/SceneManager.js';
 import { HUDManager } from './core/HUDManager.js';
 import { NetworkManager } from './core/NetworkManager.js';
+import { BootScreen } from './core/BootScreen.js';
 
 class SanctuaryVR {
   constructor() {
@@ -18,14 +19,26 @@ class SanctuaryVR {
     this.sceneManager = null;
     this.hudManager = null;
     this.networkManager = null;
+    this.bootScreen = null;
     this.initialized = false;
     this.gameStarted = false;
+    this.bootCompleted = false;
   }
 
   async init(config = {}) {
     console.log('Initializing Sanctuary VR...');
 
     try {
+      // Initialize boot screen first
+      this.bootScreen = new BootScreen();
+      await this.bootScreen.init();
+
+      // Wait for boot completion
+      await this.waitForBoot();
+
+      // Show loading screen briefly
+      this.showLoadingScreen();
+
       // Initialize compatibility layer for cross-platform VR support
       this.compatibilityLayer = new VRCompatibilityLayer();
       await this.compatibilityLayer.detectVRSupport();
@@ -33,6 +46,12 @@ class SanctuaryVR {
       // Initialize core systems
       this.core = new SanctuaryCore(config);
       await this.core.init();
+
+      // Listen for boot complete event
+      this.core.on('bootComplete', (data) => {
+        console.log('Boot complete:', data);
+        this.bootCompleted = true;
+      });
 
       // Initialize HUD Manager
       this.hudManager = new HUDManager(this.core);
@@ -53,6 +72,9 @@ class SanctuaryVR {
       // Create floating particles in HUD background
       this.createHUDParticles();
 
+      // Hide loading screen, show HUD
+      this.hideLoadingScreen();
+
       this.initialized = true;
       console.log('Sanctuary VR initialized successfully');
 
@@ -63,6 +85,53 @@ class SanctuaryVR {
     } catch (error) {
       console.error('Failed to initialize Sanctuary VR:', error);
       throw error;
+    }
+  }
+
+  async waitForBoot() {
+    return new Promise((resolve) => {
+      // Check if boot is already complete
+      if (this.bootScreen?.currentPhase === 'complete') {
+        resolve();
+        return;
+      }
+
+      // Wait for boot complete event or timeout
+      const checkInterval = setInterval(() => {
+        if (this.bootScreen?.currentPhase === 'complete') {
+          clearInterval(checkInterval);
+          resolve();
+        }
+      }, 100);
+
+      // Development: Allow skipping boot with keyboard shortcut
+      const skipHandler = (e) => {
+        if (e.key === 'Escape' && e.shiftKey && e.ctrlKey) {
+          console.log('Boot sequence skipped (dev mode)');
+          clearInterval(checkInterval);
+          this.bootScreen?.skipBoot();
+          document.removeEventListener('keydown', skipHandler);
+          resolve();
+        }
+      };
+      document.addEventListener('keydown', skipHandler);
+    });
+  }
+
+  showLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.display = 'flex';
+    }
+  }
+
+  hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.classList.add('hidden');
+      setTimeout(() => {
+        loadingScreen.style.display = 'none';
+      }, 1000);
     }
   }
 

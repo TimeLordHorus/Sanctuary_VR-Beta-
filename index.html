@@ -13,6 +13,7 @@
 
   <!-- HUD Styles -->
   <link rel="stylesheet" href="/src/styles/hud.css">
+  <link rel="stylesheet" href="/src/styles/boot.css">
 
   <style>
     body {
@@ -90,8 +91,13 @@
   </style>
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div id="loading-screen">
+  <!-- Boot Screen -->
+  <div id="boot-screen">
+    <!-- Boot content will be dynamically generated -->
+  </div>
+
+  <!-- Loading Screen (hidden initially, shown after boot) -->
+  <div id="loading-screen" style="display: none;">
     <div class="loader"></div>
     <h2 style="margin-top: 20px;">Loading Sanctuary VR...</h2>
     <p>Preparing your virtual sanctuary</p>
