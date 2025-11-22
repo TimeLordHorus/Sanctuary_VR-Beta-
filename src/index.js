@@ -11,6 +11,10 @@ import { HUDManager } from './core/HUDManager.js';
 import { NetworkManager } from './core/NetworkManager.js';
 import { BootScreen } from './core/BootScreen.js';
 import { OnboardingManager } from './core/OnboardingManager.js';
+import { VoiceCreationSystem } from './voice/VoiceCreationSystem.js';
+import { VoiceUI } from './components/VoiceUI.js';
+import { ProgressionSystem } from './progression/ProgressionSystem.js';
+import { AchievementSystem } from './progression/AchievementSystem.js';
 
 class SanctuaryVR {
   constructor() {
@@ -22,6 +26,10 @@ class SanctuaryVR {
     this.networkManager = null;
     this.bootScreen = null;
     this.onboardingManager = null;
+    this.voiceSystem = null;
+    this.voiceUI = null;
+    this.progressionSystem = null;
+    this.achievementSystem = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -66,6 +74,22 @@ class SanctuaryVR {
       this.onboardingManager = new OnboardingManager(this.core, this.hudManager);
       this.onboardingManager.init();
 
+      // Initialize Voice Creation System
+      this.voiceSystem = new VoiceCreationSystem(this.core);
+      await this.voiceSystem.init();
+
+      // Initialize Voice UI
+      this.voiceUI = new VoiceUI(this.core, this.voiceSystem);
+      this.voiceUI.init();
+
+      // Initialize Progression System
+      this.progressionSystem = new ProgressionSystem(this.core);
+      await this.progressionSystem.init();
+
+      // Initialize Achievement System
+      this.achievementSystem = new AchievementSystem(this.core, this.progressionSystem);
+      await this.achievementSystem.init();
+
       // Listen for game start events from HUD
       this.core.on('startGame', (data) => this.startGame(data));
 
@@ -87,6 +111,10 @@ class SanctuaryVR {
       // Make managers available globally
       window.hudManager = this.hudManager;
       window.onboardingManager = this.onboardingManager;
+      window.voiceSystem = this.voiceSystem;
+      window.voiceUI = this.voiceUI;
+      window.progressionSystem = this.progressionSystem;
+      window.achievementSystem = this.achievementSystem;
 
       // Emit HUD ready event to trigger onboarding
       this.core.emit('hudReady');
