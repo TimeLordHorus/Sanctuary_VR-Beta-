@@ -10,6 +10,7 @@ import { SceneManager } from './scenes/SceneManager.js';
 import { HUDManager } from './core/HUDManager.js';
 import { NetworkManager } from './core/NetworkManager.js';
 import { BootScreen } from './core/BootScreen.js';
+import { OnboardingManager } from './core/OnboardingManager.js';
 
 class SanctuaryVR {
   constructor() {
@@ -20,6 +21,7 @@ class SanctuaryVR {
     this.hudManager = null;
     this.networkManager = null;
     this.bootScreen = null;
+    this.onboardingManager = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -60,6 +62,10 @@ class SanctuaryVR {
       // Initialize Network Manager
       this.networkManager = new NetworkManager(this.core);
 
+      // Initialize Onboarding Manager
+      this.onboardingManager = new OnboardingManager(this.core, this.hudManager);
+      this.onboardingManager.init();
+
       // Listen for game start events from HUD
       this.core.on('startGame', (data) => this.startGame(data));
 
@@ -78,8 +84,12 @@ class SanctuaryVR {
       this.initialized = true;
       console.log('Sanctuary VR initialized successfully');
 
-      // Make HUD manager available globally for dialog callbacks
+      // Make managers available globally
       window.hudManager = this.hudManager;
+      window.onboardingManager = this.onboardingManager;
+
+      // Emit HUD ready event to trigger onboarding
+      this.core.emit('hudReady');
 
       return this;
     } catch (error) {
