@@ -1,0 +1,557 @@
+/*
+ * Sanctuary VR - HUD Styles
+ * Beautiful, modern UI with glassmorphism effects
+ */
+
+:root {
+  --hud-primary: #6366f1;
+  --hud-secondary: #8b5cf6;
+  --hud-success: #10b981;
+  --hud-warning: #f59e0b;
+  --hud-error: #ef4444;
+  --hud-glass-bg: rgba(15, 23, 42, 0.7);
+  --hud-glass-border: rgba(255, 255, 255, 0.1);
+  --hud-text-primary: #f8fafc;
+  --hud-text-secondary: #cbd5e1;
+  --hud-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --hud-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+/* HUD Container */
+#hud-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+#hud-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#hud-container > * {
+  pointer-events: auto;
+}
+
+/* Animated Background */
+.hud-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.1) 0%,
+    rgba(139, 92, 246, 0.1) 50%,
+    rgba(236, 72, 153, 0.1) 100%
+  );
+  animation: gradientShift 15s ease infinite;
+  z-index: -1;
+}
+
+.hud-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(99, 102, 241, 0.15) 0%,
+    transparent 50%);
+  animation: pulse 8s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(30deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* Particle Effects */
+.hud-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hud-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: float 10s linear infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10vh) translateX(100px);
+    opacity: 0;
+  }
+}
+
+/* Menu Container */
+.hud-menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 1000px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 40px;
+
+  /* Glassmorphism */
+  background: var(--hud-glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--hud-glass-border);
+  border-radius: 24px;
+  box-shadow: var(--hud-shadow);
+}
+
+/* Custom Scrollbar */
+.hud-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hud-menu::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.hud-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.hud-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Menu Header */
+.hud-menu-header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeInDown 0.8s ease;
+}
+
+.hud-title {
+  font-size: 4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  text-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
+  letter-spacing: -2px;
+}
+
+.hud-subtitle {
+  font-size: 1.25rem;
+  color: var(--hud-text-secondary);
+  margin: 10px 0 0;
+  font-weight: 300;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Options Grid */
+.hud-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+/* Option Card */
+.hud-option-card {
+  position: relative;
+  padding: 32px 28px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.hud-option-card.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.hud-option-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--option-color);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 40px var(--option-color);
+}
+
+.hud-option-card.hovered {
+  animation: cardPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes cardPulse {
+  0%, 100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px var(--option-color); }
+  50% { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 60px var(--option-color); }
+}
+
+/* Option Icon */
+.option-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, var(--option-color) 0%, transparent 70%);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.hud-option-card:hover .option-icon {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 0 20px var(--option-color));
+}
+
+/* Option Content */
+.option-content {
+  position: relative;
+  z-index: 2;
+}
+
+.option-label {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--hud-text-primary);
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+}
+
+.option-subtitle {
+  font-size: 0.95rem;
+  color: var(--hud-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Hover Effect Overlay */
+.option-hover-effect {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--option-color) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.hud-option-card:hover .option-hover-effect {
+  opacity: 0.1;
+}
+
+/* Particles Container */
+.option-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--option-color);
+  border-radius: 50%;
+  opacity: 0;
+  animation: particleFloat 3s ease-out forwards;
+}
+
+@keyframes particleFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) scale(1);
+  }
+}
+
+/* Dialog */
+#hud-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 2000;
+}
+
+#hud-dialog.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dialog-content {
+  background: var(--hud-glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--hud-glass-border);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: var(--hud-shadow);
+  animation: dialogSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dialog-content h3 {
+  color: var(--hud-text-primary);
+  font-size: 1.75rem;
+  margin: 0 0 24px;
+  font-weight: 700;
+}
+
+.dialog-message {
+  color: var(--hud-text-secondary);
+  font-size: 1.1rem;
+  margin: 20px 0;
+  text-align: center;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  margin: 20px auto;
+  border: 4px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Dialog Input */
+.dialog-input {
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--hud-text-primary);
+  font-size: 1rem;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.dialog-input:focus {
+  outline: none;
+  border-color: var(--hud-primary);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.dialog-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Dialog Checkbox */
+.dialog-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--hud-text-secondary);
+  margin: 16px 0;
+  cursor: pointer;
+}
+
+.dialog-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* Dialog Buttons */
+.dialog-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.dialog-button {
+  flex: 1;
+  padding: 14px 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: var(--hud-text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dialog-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-button.primary {
+  background: linear-gradient(135deg, var(--hud-primary), var(--hud-secondary));
+  border: none;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.dialog-button.primary:hover {
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+}
+
+.dialog-button.small {
+  flex: none;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+}
+
+/* Server Browser */
+.server-browser {
+  max-width: 600px;
+}
+
+.server-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin: 20px 0;
+}
+
+.server-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.server-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--hud-primary);
+  transform: translateX(4px);
+}
+
+.server-info h4 {
+  color: var(--hud-text-primary);
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.server-info p {
+  color: var(--hud-text-secondary);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hud-title {
+    font-size: 2.5rem;
+  }
+
+  .hud-options-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .hud-menu {
+    padding: 24px;
+    width: 95%;
+  }
+
+  .dialog-content {
+    padding: 24px;
+  }
+}
+
+/* VR Mode Adjustments */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

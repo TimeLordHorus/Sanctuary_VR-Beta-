@@ -8,6 +8,11 @@ Sanctuary VR is a flexible, cross-platform virtual reality environment designed 
 
 ## Features
 
+- **Beautiful HUD System**: Stunning glassmorphism UI with smooth animations and particle effects
+- **Multiplayer Support**:
+  - Local Play: Solo exploration
+  - LAN Party: Connect with friends on your network
+  - Online Multiplayer: Join the global sanctuary community
 - **Multi-Platform Support**: Web (WebXR), Desktop (OpenXR), Mobile VR
 - **Open Source VR Frameworks**:
   - A-Frame for web-based VR
@@ -18,13 +23,23 @@ Sanctuary VR is a flexible, cross-platform virtual reality environment designed 
 - **IDE Integration**: VSCode, Unity Editor, Godot Engine
 - **Modular Architecture**: Easy to extend and customize
 - **Accessibility Features**: Multiple interaction modes and comfort settings
+- **VR Spatial UI**: 3D menus optimized for VR headsets
 
 ## Quick Start
 
 ### Web-based VR (A-Frame)
 ```bash
+# Install dependencies
 npm install
+
+# Start development server
 npm run dev:web
+
+# Open browser to http://localhost:5173
+# Choose your game mode from the beautiful HUD:
+# - Local Play: Explore solo
+# - LAN Party: Host or join local games
+# - Multiplayer Online: Connect globally
 ```
 
 ### Desktop Development

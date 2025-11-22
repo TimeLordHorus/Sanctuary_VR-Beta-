@@ -11,6 +11,9 @@
   <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
   <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
 
+  <!-- HUD Styles -->
+  <link rel="stylesheet" href="/src/styles/hud.css">
+
   <style>
     body {
       margin: 0;
@@ -94,8 +97,27 @@
     <p>Preparing your virtual sanctuary</p>
   </div>
 
+  <!-- HUD Container -->
+  <div id="hud-container">
+    <!-- Animated Background -->
+    <div class="hud-background"></div>
+
+    <!-- Particle Effects -->
+    <div class="hud-particles" id="hud-particles"></div>
+
+    <!-- Main Menu -->
+    <div class="hud-menu">
+      <div id="hud-menu-content">
+        <!-- Menu content will be dynamically generated -->
+      </div>
+    </div>
+
+    <!-- Dialog Overlay -->
+    <div id="hud-dialog"></div>
+  </div>
+
   <!-- UI Overlay -->
-  <div id="ui-overlay">
+  <div id="ui-overlay" style="display: none;">
     <h3>Sanctuary VR</h3>
     <p id="vr-status">Checking VR support...</p>
     <p id="scene-info">Scene: Entrance Hall</p>
@@ -254,6 +276,29 @@
     <a-entity
       sound="src: #ambient-sound; autoplay: true; loop: true; volume: 0.3"
       position="0 2 -5">
+    </a-entity>
+
+    <!-- VR Spatial HUD (visible only in VR mode) -->
+    <a-entity id="vr-spatial-menu" position="0 1.6 -2" visible="false">
+      <a-plane
+        width="3"
+        height="2"
+        color="#0f172a"
+        opacity="0.9"
+        shader="flat">
+      </a-plane>
+
+      <!-- Menu Title -->
+      <a-text
+        value="SANCTUARY VR"
+        align="center"
+        position="0 0.7 0.01"
+        width="2.5"
+        color="#6366f1">
+      </a-text>
+
+      <!-- Menu Options will be added dynamically -->
+      <a-entity id="vr-menu-options" position="0 0 0.01"></a-entity>
     </a-entity>
   </a-scene>
 
