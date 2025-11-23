@@ -23,6 +23,9 @@ import { BehavioralAnalytics } from './analytics/BehavioralAnalytics.js';
 import { CulturalGenerator } from './culture/CulturalGenerator.js';
 import { PantheonSelection } from './core/PantheonSelection.js';
 import { TempleOfArtemis } from './scenes/TempleOfArtemis.js';
+import { ProceduralLandscape } from './world/ProceduralLandscape.js';
+import { ResourceSystem } from './world/ResourceSystem.js';
+import { PuzzleSystem } from './world/PuzzleSystem.js';
 
 class SanctuaryVR {
   constructor() {
@@ -46,6 +49,9 @@ class SanctuaryVR {
     this.culturalGenerator = null;
     this.pantheonSelection = null;
     this.templeOfArtemis = null;
+    this.proceduralLandscape = null;
+    this.resourceSystem = null;
+    this.puzzleSystem = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -161,6 +167,19 @@ class SanctuaryVR {
       this.templeOfArtemis = new TempleOfArtemis(this.core);
       await this.templeOfArtemis.init();
 
+      // Initialize Resource System
+      this.resourceSystem = new ResourceSystem(this.core);
+      await this.resourceSystem.init();
+
+      // Initialize Puzzle System
+      this.puzzleSystem = new PuzzleSystem(this.core, this.resourceSystem);
+      await this.puzzleSystem.init();
+
+      // Initialize Procedural Landscape Generator
+      const scene = document.querySelector('a-scene');
+      this.proceduralLandscape = new ProceduralLandscape(this.core, scene);
+      await this.proceduralLandscape.init();
+
       // Create floating particles in HUD background
       this.createHUDParticles();
 
@@ -187,6 +206,9 @@ class SanctuaryVR {
       window.sanctuaryMenu = this.sanctuaryMenu;
       window.pantheonSelection = this.pantheonSelection;
       window.templeOfArtemis = this.templeOfArtemis;
+      window.resourceSystem = this.resourceSystem;
+      window.puzzleSystem = this.puzzleSystem;
+      window.proceduralLandscape = this.proceduralLandscape;
 
       // Emit HUD ready event to trigger onboarding
       this.core.emit('hudReady');
