@@ -18,6 +18,9 @@ import { AchievementSystem } from './progression/AchievementSystem.js';
 import { SanctuaryMenu } from './core/SanctuaryMenu.js';
 import { KeyboardHint } from './components/KeyboardHint.js';
 import { WelcomeLogin } from './core/WelcomeLogin.js';
+import { KnowledgeIndexer } from './knowledge/KnowledgeIndexer.js';
+import { BehavioralAnalytics } from './analytics/BehavioralAnalytics.js';
+import { CulturalGenerator } from './culture/CulturalGenerator.js';
 
 class SanctuaryVR {
   constructor() {
@@ -36,6 +39,9 @@ class SanctuaryVR {
     this.sanctuaryMenu = null;
     this.keyboardHint = null;
     this.welcomeLogin = null;
+    this.knowledgeIndexer = null;
+    this.behavioralAnalytics = null;
+    this.culturalGenerator = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -106,6 +112,18 @@ class SanctuaryVR {
       this.achievementSystem = new AchievementSystem(this.core, this.progressionSystem);
       await this.achievementSystem.init();
 
+      // Initialize Knowledge Indexer
+      this.knowledgeIndexer = new KnowledgeIndexer(this.core);
+      await this.knowledgeIndexer.init();
+
+      // Initialize Behavioral Analytics
+      this.behavioralAnalytics = new BehavioralAnalytics(this.core);
+      await this.behavioralAnalytics.init();
+
+      // Initialize Cultural Generator
+      this.culturalGenerator = new CulturalGenerator(this.core, this.knowledgeIndexer, this.behavioralAnalytics);
+      await this.culturalGenerator.init();
+
       // Initialize Sanctuary Menu (Q to open)
       this.sanctuaryMenu = new SanctuaryMenu(this.core);
       await this.sanctuaryMenu.init();
@@ -141,6 +159,9 @@ class SanctuaryVR {
       window.voiceUI = this.voiceUI;
       window.progressionSystem = this.progressionSystem;
       window.achievementSystem = this.achievementSystem;
+      window.knowledgeIndexer = this.knowledgeIndexer;
+      window.behavioralAnalytics = this.behavioralAnalytics;
+      window.culturalGenerator = this.culturalGenerator;
       window.sanctuaryMenu = this.sanctuaryMenu;
 
       // Emit HUD ready event to trigger onboarding
@@ -300,6 +321,9 @@ class SanctuaryVR {
     if (this.networkManager) this.networkManager.dispose();
     if (this.sceneManager) this.sceneManager.dispose();
     if (this.environmentManager) this.environmentManager.dispose();
+    if (this.knowledgeIndexer) this.knowledgeIndexer.destroy();
+    if (this.behavioralAnalytics) this.behavioralAnalytics.destroy();
+    if (this.culturalGenerator) this.culturalGenerator.destroy();
     if (this.core) this.core.dispose();
     this.initialized = false;
     this.gameStarted = false;

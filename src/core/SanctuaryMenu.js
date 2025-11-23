@@ -705,25 +705,97 @@ export class SanctuaryMenu {
    * Process AI message (placeholder for LLM integration)
    */
   async processAIMessage(message) {
-    // This is where you would integrate with an LLM API
-    // For now, return intelligent predefined responses
-
     const lowerMessage = message.toLowerCase();
 
+    // Use Cultural Generator if available
+    if (window.culturalGenerator) {
+      const culturalResponse = window.culturalGenerator.generateCulturalResponse(
+        this.conversationHistory,
+        message
+      );
+
+      // Build response with cultural personality
+      let response = '';
+      const culture = culturalResponse.culturalContext;
+      const personality = culturalResponse.personality;
+
+      // Query knowledge base for relevant information
+      let knowledgeContext = '';
+      if (window.knowledgeIndexer) {
+        const results = window.knowledgeIndexer.search(message, { maxResults: 2 });
+        if (results.length > 0) {
+          knowledgeContext = `\n\n📚 From my knowledge: ${results[0].description || results[0].title}`;
+        }
+      }
+
+      // Generate personality-aware response
+      if (lowerMessage.includes('create') || lowerMessage.includes('build') || lowerMessage.includes('make')) {
+        if (personality.creativity > 0.7) {
+          response = "Oh, I love the creative energy! Let's bring something extraordinary to life. What you're imagining sounds fascinating - I'm ready to help you manifest it in your sanctuary!";
+        } else if (personality.creativity < 0.3) {
+          response = "I'll help you create that. Let me analyze the requirements and execute the creation process systematically.";
+        } else {
+          response = "I'll help you create that! Let me analyze what you want and bring it to life in your sanctuary.";
+        }
+        response += knowledgeContext;
+      } else if (lowerMessage.includes('knowledge') || lowerMessage.includes('search') || lowerMessage.includes('learn')) {
+        response = `I can search through vast archives of preserved knowledge. I have access to Internet Archive, Wikipedia, and other data preservation sources. What would you like to explore?`;
+        if (culture.expertiseAreas && culture.expertiseAreas.length > 0) {
+          response += `\n\n🎓 My expertise areas include: ${culture.expertiseAreas.slice(0, 3).join(', ')}`;
+        }
+        response += knowledgeContext;
+      } else if (lowerMessage.includes('culture') || lowerMessage.includes('personality') || lowerMessage.includes('evolve')) {
+        const traits = culture.dominantTraits?.map(t => t.name).join(', ') || 'developing';
+        const values = culture.coreValues?.map(v => v.name).join(', ') || 'forming';
+
+        response = `I'm currently in Generation ${culture.generation} of my evolution. Through our interactions, I've developed these traits: ${traits}. `;
+        response += `My core values are: ${values}. I'm "bigger on the inside" - I learn and grow from every interaction, `;
+        response += `building a unique culture based on your behavior patterns and the knowledge I've indexed.`;
+
+        if (personality.technicality > 0.6) {
+          response += `\n\nTechnically, I use behavioral analytics to track interaction patterns, integrate knowledge from external sources, and generate cultural traits that evolve over time.`;
+        }
+      } else if (lowerMessage.includes('sanctuary') && lowerMessage.includes('save')) {
+        if (personality.formality > 0.6) {
+          response = "To properly preserve your sanctuary, please navigate to the 'Sanctuaries' tab and select 'Create New'. ";
+          response += "The system will capture all objects, configurations, and environmental settings for future restoration.";
+        } else {
+          response = "Want to save your sanctuary? Just hit the 'Sanctuaries' tab and click 'Create New'. ";
+          response += "I'll snapshot everything - all your creations, settings, the whole world. You can load it back anytime!";
+        }
+      } else if (lowerMessage.includes('voice') && lowerMessage.includes('command')) {
+        response = "Voice commands are powerful! Try saying things like 'Create a blue sphere', 'Make it night', or 'Change lighting to sunset'. ";
+        response += "I understand natural language, so just speak naturally. Press V to activate voice mode!";
+      } else {
+        // Default response with cultural context
+        if (personality.exploration > 0.7) {
+          response = `Interesting question! I'm curious to explore "${message}" with you. `;
+        } else if (personality.pace > 0.7) {
+          response = `Got it! Let's dive into "${message}" right away. `;
+        } else {
+          response = `I understand you're asking about "${message}". `;
+        }
+
+        response += "I'm here to help you create, explore, and evolve your sanctuary. ";
+
+        if (culture.dominantTraits && culture.dominantTraits.length > 0) {
+          response += `As a ${culture.dominantTraits[0].name.toLowerCase()} companion, `;
+        }
+
+        response += "what specific aspect would you like to know more about?";
+        response += knowledgeContext;
+      }
+
+      return response;
+    }
+
+    // Fallback if cultural generator not available
     if (lowerMessage.includes('create') || lowerMessage.includes('build') || lowerMessage.includes('make')) {
-      return "I'll help you create that! Let me analyze what you want and bring it to life in your sanctuary. I'm processing your request now...";
+      return "I'll help you create that! Let me analyze what you want and bring it to life in your sanctuary.";
     }
 
     if (lowerMessage.includes('sanctuary') && lowerMessage.includes('save')) {
-      return "To save your sanctuary, simply click the 'Sanctuaries' tab and then 'Create New'. I'll capture everything in your current world - all objects, settings, and configurations. You can load it anytime!";
-    }
-
-    if (lowerMessage.includes('evolve') || lowerMessage.includes('self-modifying')) {
-      return "The evolution system allows me to generate new capabilities and features dynamically. As you level up, I unlock the ability to write new code, create UI elements, and even modify my own behavior. Think of it as the sanctuary growing more intelligent and capable over time!";
-    }
-
-    if (lowerMessage.includes('voice') && lowerMessage.includes('command')) {
-      return "Voice commands are powerful! Try saying things like 'Create a blue sphere', 'Make it night', or 'Change lighting to sunset'. I understand natural language, so just speak naturally. Press V to activate voice mode!";
+      return "To save your sanctuary, simply click the 'Sanctuaries' tab and then 'Create New'. I'll capture everything in your current world!";
     }
 
     return "I understand you're asking about " + message + ". I'm here to help you create, explore, and evolve your sanctuary. What specific aspect would you like to know more about?";
