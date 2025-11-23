@@ -3,6 +3,8 @@
  * Handles speech-to-text using Web Speech API
  */
 
+import { Logger } from '../utils/Logger.js';
+
 export class VoiceRecognitionManager {
   constructor(core, config = {}) {
     this.core = core;
@@ -42,7 +44,7 @@ export class VoiceRecognitionManager {
       throw new Error('Web Speech API is not supported in this browser');
     }
 
-    console.log('[VoiceRecognitionManager] Initializing voice recognition...');
+    Logger.info('[VoiceRecognitionManager] Initializing voice recognition...');
 
     // Create recognition instance
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -57,7 +59,7 @@ export class VoiceRecognitionManager {
     // Set up event handlers
     this.setupRecognitionHandlers();
 
-    console.log('[VoiceRecognitionManager] Voice recognition initialized');
+    Logger.info('[VoiceRecognitionManager] Voice recognition initialized');
     return true;
   }
 
@@ -67,14 +69,14 @@ export class VoiceRecognitionManager {
   setupRecognitionHandlers() {
     // Recognition starts
     this.recognition.onstart = () => {
-      console.log('[VoiceRecognitionManager] Recognition started');
+      Logger.info('[VoiceRecognitionManager] Recognition started');
       this.isActive = true;
       this.emit('start', {});
     };
 
     // Recognition ends
     this.recognition.onend = () => {
-      console.log('[VoiceRecognitionManager] Recognition ended');
+      Logger.info('[VoiceRecognitionManager] Recognition ended');
       this.isActive = false;
       this.emit('end', {});
 
@@ -95,7 +97,7 @@ export class VoiceRecognitionManager {
 
     // Recognition error
     this.recognition.onerror = (event) => {
-      console.error('[VoiceRecognitionManager] Recognition error:', event.error);
+      Logger.error('[VoiceRecognitionManager] Recognition error:', event.error);
       this.emit('error', {
         error: event.error,
         message: event.message
@@ -104,13 +106,13 @@ export class VoiceRecognitionManager {
 
     // Audio start (user started speaking)
     this.recognition.onaudiostart = () => {
-      console.log('[VoiceRecognitionManager] Audio capture started');
+      Logger.info('[VoiceRecognitionManager] Audio capture started');
       this.emit('audioStart', {});
     };
 
     // Audio end (user stopped speaking)
     this.recognition.onaudioend = () => {
-      console.log('[VoiceRecognitionManager] Audio capture ended');
+      Logger.info('[VoiceRecognitionManager] Audio capture ended');
       this.emit('audioEnd', {});
     };
 
@@ -126,19 +128,19 @@ export class VoiceRecognitionManager {
 
     // Speech start (speech detected)
     this.recognition.onspeechstart = () => {
-      console.log('[VoiceRecognitionManager] Speech started');
+      Logger.info('[VoiceRecognitionManager] Speech started');
       this.emit('speechStart', {});
     };
 
     // Speech end (speech stopped)
     this.recognition.onspeechend = () => {
-      console.log('[VoiceRecognitionManager] Speech ended');
+      Logger.info('[VoiceRecognitionManager] Speech ended');
       this.emit('speechEnd', {});
     };
 
     // No speech detected
     this.recognition.onnomatch = () => {
-      console.warn('[VoiceRecognitionManager] No speech match');
+      Logger.warn('[VoiceRecognitionManager] No speech match');
       this.emit('noMatch', {});
     };
   }
@@ -225,7 +227,7 @@ export class VoiceRecognitionManager {
     }
 
     if (this.isActive) {
-      console.warn('[VoiceRecognitionManager] Already active');
+      Logger.warn('[VoiceRecognitionManager] Already active');
       return;
     }
 
@@ -237,9 +239,9 @@ export class VoiceRecognitionManager {
       this.shouldRestart = true;
       this.recognition.start();
 
-      console.log('[VoiceRecognitionManager] Started listening');
+      Logger.info('[VoiceRecognitionManager] Started listening');
     } catch (error) {
-      console.error('[VoiceRecognitionManager] Failed to start:', error);
+      Logger.error('[VoiceRecognitionManager] Failed to start:', error);
       throw error;
     }
   }
@@ -255,7 +257,7 @@ export class VoiceRecognitionManager {
     this.shouldRestart = false;
     this.recognition.stop();
 
-    console.log('[VoiceRecognitionManager] Stopped listening');
+    Logger.info('[VoiceRecognitionManager] Stopped listening');
   }
 
   /**
@@ -268,7 +270,7 @@ export class VoiceRecognitionManager {
       stream.getTracks().forEach(track => track.stop());
       return true;
     } catch (error) {
-      console.error('[VoiceRecognitionManager] Microphone permission denied:', error);
+      Logger.error('[VoiceRecognitionManager] Microphone permission denied:', error);
       throw new Error('Microphone access denied');
     }
   }
@@ -392,7 +394,7 @@ export class VoiceRecognitionManager {
         try {
           handler(data);
         } catch (error) {
-          console.error(`[VoiceRecognitionManager] Error in ${event} handler:`, error);
+          Logger.error(`[VoiceRecognitionManager] Error in ${event} handler:`, error);
         }
       });
     }
