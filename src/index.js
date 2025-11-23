@@ -15,6 +15,7 @@ import { VoiceCreationSystem } from './voice/VoiceCreationSystem.js';
 import { VoiceUI } from './components/VoiceUI.js';
 import { ProgressionSystem } from './progression/ProgressionSystem.js';
 import { AchievementSystem } from './progression/AchievementSystem.js';
+import { SanctuaryMenu } from './core/SanctuaryMenu.js';
 
 class SanctuaryVR {
   constructor() {
@@ -30,6 +31,7 @@ class SanctuaryVR {
     this.voiceUI = null;
     this.progressionSystem = null;
     this.achievementSystem = null;
+    this.sanctuaryMenu = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -90,6 +92,10 @@ class SanctuaryVR {
       this.achievementSystem = new AchievementSystem(this.core, this.progressionSystem);
       await this.achievementSystem.init();
 
+      // Initialize Sanctuary Menu (Q to open)
+      this.sanctuaryMenu = new SanctuaryMenu(this.core);
+      await this.sanctuaryMenu.init();
+
       // Listen for game start events from HUD
       this.core.on('startGame', (data) => this.startGame(data));
 
@@ -115,6 +121,7 @@ class SanctuaryVR {
       window.voiceUI = this.voiceUI;
       window.progressionSystem = this.progressionSystem;
       window.achievementSystem = this.achievementSystem;
+      window.sanctuaryMenu = this.sanctuaryMenu;
 
       // Emit HUD ready event to trigger onboarding
       this.core.emit('hudReady');
