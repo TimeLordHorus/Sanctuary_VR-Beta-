@@ -21,6 +21,8 @@ import { WelcomeLogin } from './core/WelcomeLogin.js';
 import { KnowledgeIndexer } from './knowledge/KnowledgeIndexer.js';
 import { BehavioralAnalytics } from './analytics/BehavioralAnalytics.js';
 import { CulturalGenerator } from './culture/CulturalGenerator.js';
+import { PantheonSelection } from './core/PantheonSelection.js';
+import { TempleOfArtemis } from './scenes/TempleOfArtemis.js';
 
 class SanctuaryVR {
   constructor() {
@@ -42,6 +44,8 @@ class SanctuaryVR {
     this.knowledgeIndexer = null;
     this.behavioralAnalytics = null;
     this.culturalGenerator = null;
+    this.pantheonSelection = null;
+    this.templeOfArtemis = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -66,6 +70,16 @@ class SanctuaryVR {
         this.welcomeLogin.show();
         // Wait for welcome completion
         await this.waitForWelcome();
+      }
+
+      // Initialize and show pantheon selection (if first time)
+      this.pantheonSelection = new PantheonSelection(this.core);
+      const shouldShowPantheon = await this.pantheonSelection.init();
+
+      if (shouldShowPantheon) {
+        this.pantheonSelection.show();
+        // Wait for pantheon selection
+        await this.waitForPantheon();
       }
 
       // Show loading screen briefly
@@ -143,11 +157,19 @@ class SanctuaryVR {
       // Initialize scene manager (but don't load yet)
       this.sceneManager = new SceneManager(this.core);
 
+      // Initialize Temple of Artemis as tutorial world
+      this.templeOfArtemis = new TempleOfArtemis(this.core);
+      await this.templeOfArtemis.init();
+
       // Create floating particles in HUD background
       this.createHUDParticles();
 
-      // Hide loading screen, show HUD
+      // Hide loading screen, show HUD (BEFORE loading world)
       this.hideLoadingScreen();
+
+      // Load Temple of Artemis scene
+      console.log('[SanctuaryVR] Loading Temple of Artemis tutorial world...');
+      this.templeOfArtemis.startTutorial();
 
       this.initialized = true;
       console.log('Sanctuary VR initialized successfully');
@@ -163,6 +185,8 @@ class SanctuaryVR {
       window.behavioralAnalytics = this.behavioralAnalytics;
       window.culturalGenerator = this.culturalGenerator;
       window.sanctuaryMenu = this.sanctuaryMenu;
+      window.pantheonSelection = this.pantheonSelection;
+      window.templeOfArtemis = this.templeOfArtemis;
 
       // Emit HUD ready event to trigger onboarding
       this.core.emit('hudReady');
@@ -221,6 +245,29 @@ class SanctuaryVR {
           this.welcomeLogin?.hide();
           document.removeEventListener('keydown', skipHandler);
           resolve({ userData: { username: 'DevUser', isGuest: true } });
+        }
+      };
+      document.addEventListener('keydown', skipHandler);
+    });
+  }
+
+  async waitForPantheon() {
+    return new Promise((resolve) => {
+      // Listen for pantheon complete event
+      const pantheonHandler = (data) => {
+        console.log('[SanctuaryVR] Pantheon selection completed:', data);
+        resolve(data);
+      };
+
+      this.core.on('pantheonComplete', pantheonHandler);
+
+      // Development: Allow skipping pantheon with keyboard shortcut
+      const skipHandler = (e) => {
+        if (e.key === 'Escape' && e.shiftKey && e.ctrlKey) {
+          console.log('Pantheon selection skipped (dev mode)');
+          this.pantheonSelection?.hide();
+          document.removeEventListener('keydown', skipHandler);
+          resolve({ patron: { id: 'none', name: 'The Wanderer' } });
         }
       };
       document.addEventListener('keydown', skipHandler);
