@@ -17,6 +17,7 @@ import { ProgressionSystem } from './progression/ProgressionSystem.js';
 import { AchievementSystem } from './progression/AchievementSystem.js';
 import { SanctuaryMenu } from './core/SanctuaryMenu.js';
 import { KeyboardHint } from './components/KeyboardHint.js';
+import { WelcomeLogin } from './core/WelcomeLogin.js';
 
 class SanctuaryVR {
   constructor() {
@@ -34,6 +35,7 @@ class SanctuaryVR {
     this.achievementSystem = null;
     this.sanctuaryMenu = null;
     this.keyboardHint = null;
+    this.welcomeLogin = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -49,6 +51,16 @@ class SanctuaryVR {
 
       // Wait for boot completion
       await this.waitForBoot();
+
+      // Initialize and show welcome login (if first time)
+      this.welcomeLogin = new WelcomeLogin(this.core);
+      const shouldShowWelcome = await this.welcomeLogin.init();
+
+      if (shouldShowWelcome) {
+        this.welcomeLogin.show();
+        // Wait for welcome completion
+        await this.waitForWelcome();
+      }
 
       // Show loading screen briefly
       this.showLoadingScreen();
@@ -165,6 +177,29 @@ class SanctuaryVR {
           this.bootScreen?.skipBoot();
           document.removeEventListener('keydown', skipHandler);
           resolve();
+        }
+      };
+      document.addEventListener('keydown', skipHandler);
+    });
+  }
+
+  async waitForWelcome() {
+    return new Promise((resolve) => {
+      // Listen for welcome complete event
+      const welcomeHandler = (data) => {
+        console.log('[SanctuaryVR] Welcome completed:', data);
+        resolve(data);
+      };
+
+      this.core.on('welcomeComplete', welcomeHandler);
+
+      // Development: Allow skipping welcome with keyboard shortcut
+      const skipHandler = (e) => {
+        if (e.key === 'Escape' && e.shiftKey && e.ctrlKey) {
+          console.log('Welcome skipped (dev mode)');
+          this.welcomeLogin?.hide();
+          document.removeEventListener('keydown', skipHandler);
+          resolve({ userData: { username: 'DevUser', isGuest: true } });
         }
       };
       document.addEventListener('keydown', skipHandler);
