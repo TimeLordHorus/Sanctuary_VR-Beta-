@@ -21,6 +21,9 @@ import { WelcomeLogin } from './core/WelcomeLogin.js';
 import { KnowledgeIndexer } from './knowledge/KnowledgeIndexer.js';
 import { BehavioralAnalytics } from './analytics/BehavioralAnalytics.js';
 import { CulturalGenerator } from './culture/CulturalGenerator.js';
+import { shoppingManager } from './shopping/ShoppingManager.js';
+import { shoppingUI } from './shopping/ShoppingUI.js';
+import { avatarManager } from './avatar/AvatarManager.js';
 
 class SanctuaryVR {
   constructor() {
@@ -42,6 +45,8 @@ class SanctuaryVR {
     this.knowledgeIndexer = null;
     this.behavioralAnalytics = null;
     this.culturalGenerator = null;
+    this.shoppingManager = null;
+    this.avatarManager = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -124,6 +129,11 @@ class SanctuaryVR {
       this.culturalGenerator = new CulturalGenerator(this.core, this.knowledgeIndexer, this.behavioralAnalytics);
       await this.culturalGenerator.init();
 
+      // Initialize Shopping System
+      this.shoppingManager = shoppingManager;
+      this.shoppingManager.progressionSystem = this.progressionSystem;
+      this.avatarManager = avatarManager;
+
       // Initialize Sanctuary Menu (Q to open)
       this.sanctuaryMenu = new SanctuaryMenu(this.core);
       await this.sanctuaryMenu.init();
@@ -163,6 +173,9 @@ class SanctuaryVR {
       window.behavioralAnalytics = this.behavioralAnalytics;
       window.culturalGenerator = this.culturalGenerator;
       window.sanctuaryMenu = this.sanctuaryMenu;
+      window.shoppingManager = this.shoppingManager;
+      window.avatarManager = this.avatarManager;
+      window.sanctuaryShoppingUI = shoppingUI;
 
       // Emit HUD ready event to trigger onboarding
       this.core.emit('hudReady');

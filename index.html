@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/src/styles/sanctuary-menu.css">
   <link rel="stylesheet" href="/src/styles/keyboard-hints.css">
   <link rel="stylesheet" href="/src/styles/welcome-login.css">
+  <link rel="stylesheet" href="/src/styles/shopping.css">
 
   <style>
     body {
@@ -227,6 +228,59 @@
       event-set__leave="_event: mouseleave; color: #8B4513">
     </a-cylinder>
 
+    <!-- Virtual Mall Portal -->
+    <a-entity position="-5 0 -3" id="mall-portal-group">
+      <!-- Portal Frame -->
+      <a-torus
+        position="0 2 0"
+        radius="1.2"
+        radius-tubular="0.1"
+        color="#8a2be2"
+        material="emissive: #8a2be2; emissiveIntensity: 0.8; metalness: 0.8"
+        shadow="cast: true"
+        animation="property: rotation; to: 0 360 0; dur: 20000; loop: true; easing: linear">
+      </a-torus>
+
+      <!-- Portal Inner Circle (glowing) -->
+      <a-circle
+        position="0 2 0"
+        radius="1.1"
+        color="#ff00ff"
+        material="shader: flat; transparent: true; opacity: 0.6"
+        class="interactable mall-portal"
+        animation="property: material.opacity; to: 0.3; dir: alternate; dur: 1500; loop: true; easing: easeInOutSine"
+        animation__rotate="property: rotation; to: 0 0 360; dur: 8000; loop: true; easing: linear">
+      </a-circle>
+
+      <!-- Portal Text -->
+      <a-text
+        value="VIRTUAL MALL\nOf The Future"
+        align="center"
+        position="0 3.5 0"
+        width="3"
+        color="#00ffff"
+        animation="property: material.emissiveIntensity; from: 0.5; to: 1; dir: alternate; dur: 1000; loop: true">
+      </a-text>
+
+      <!-- Stand/Pedestal -->
+      <a-cylinder
+        position="0 0.5 0"
+        radius="0.8"
+        height="1"
+        color="#4a148c"
+        shadow="cast: true">
+      </a-cylinder>
+
+      <!-- Particle Effects (decorative) -->
+      <a-sphere
+        position="0 2 0"
+        radius="0.05"
+        color="#00ffff"
+        material="emissive: #00ffff; emissiveIntensity: 1"
+        animation="property: position; to: 0 3.5 0; dur: 2000; loop: true; easing: easeInOutQuad">
+      </a-sphere>
+    </a-entity>
+
     <!-- Floating Orbs (decorative) -->
     <a-sphere
       position="0 2.5 -5"
@@ -352,6 +406,36 @@
       interactables.forEach(elem => {
         elem.addEventListener('click', () => {
           console.log('Interacted with:', elem);
+
+          // Handle mall portal
+          if (elem.classList.contains('mall-portal')) {
+            console.log('Entering Virtual Mall...');
+
+            // Open sanctuary menu to shopping tab
+            if (window.sanctuaryMenu) {
+              window.sanctuaryMenu.open();
+              setTimeout(() => {
+                window.sanctuaryMenu.switchTab('shopping');
+              }, 100);
+            }
+
+            // Award crystals for first visit
+            if (window.shoppingManager) {
+              const firstVisit = !localStorage.getItem('visited_mall');
+              if (firstVisit) {
+                window.shoppingManager.earnCrystalsForAction('first_visit_mall');
+                localStorage.setItem('visited_mall', 'true');
+                console.log('First visit bonus: +100 Crystals!');
+              } else {
+                window.shoppingManager.earnCrystalsForAction('daily_visit_mall');
+              }
+            }
+
+            // Load mall scene if scene manager is available
+            if (window.sanctuaryInstance && window.sanctuaryInstance.sceneManager) {
+              window.sanctuaryInstance.sceneManager.loadScene('mall-entrance');
+            }
+          }
         });
       });
     });

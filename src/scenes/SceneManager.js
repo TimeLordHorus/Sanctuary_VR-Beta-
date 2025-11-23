@@ -3,6 +3,8 @@
  * Manages VR scene loading, transitions, and interactions
  */
 
+import { mallScenes } from './MallScenes.js';
+
 export class SceneManager {
   constructor(core) {
     this.core = core;
@@ -56,7 +58,8 @@ export class SceneManager {
         teleportPoints: [
           { id: 'spawn', position: [0, 0, 0], label: 'Spawn Point' },
           { id: 'altar', position: [0, 0, -10], label: 'Altar' },
-          { id: 'meditation', position: [5, 0, -5], label: 'Meditation Area' }
+          { id: 'meditation', position: [5, 0, -5], label: 'Meditation Area' },
+          { id: 'mall-portal', position: [-5, 0, -5], label: 'Virtual Mall Portal' }
         ],
         interactables: [
           {
@@ -71,6 +74,14 @@ export class SceneManager {
             type: 'seat',
             position: [5, 0, -5],
             action: 'sit'
+          },
+          {
+            id: 'mall-portal',
+            type: 'portal',
+            position: [-5, 0, -5],
+            action: 'loadScene',
+            target: 'mall-entrance',
+            label: 'Enter Virtual Mall'
           }
         ]
       },
@@ -86,7 +97,9 @@ export class SceneManager {
           { id: 'center', position: [0, 0, 0], label: 'Center' },
           { id: 'exit', position: [0, 0, 10], label: 'Exit' }
         ]
-      }
+      },
+      // Merge in mall scenes
+      ...mallScenes
     };
 
     return sceneConfigs[sceneId] || sceneConfigs['entrance'];

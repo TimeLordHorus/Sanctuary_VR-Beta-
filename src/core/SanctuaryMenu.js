@@ -36,7 +36,8 @@ export class SanctuaryMenu {
       { id: 'sanctuaries', name: 'Sanctuaries', icon: '🏛️' },
       { id: 'world-settings', name: 'World', icon: '🌍' },
       { id: 'knowledge', name: 'Knowledge', icon: '📚' },
-      { id: 'evolution', name: 'Evolution', icon: '🧬' }
+      { id: 'evolution', name: 'Evolution', icon: '🧬' },
+      { id: 'shopping', name: 'Virtual Mall', icon: '🛍️' }
     ];
 
     // Storage keys
@@ -368,6 +369,13 @@ export class SanctuaryMenu {
               </div>
             </div>
           </div>
+
+          <!-- Shopping Tab -->
+          <div class="sanctuary-tab-content ${this.currentTab === 'shopping' ? 'active' : ''}"
+               data-tab="shopping"
+               id="shopping-tab-content">
+            <!-- Shopping content will be dynamically loaded here -->
+          </div>
         </div>
       </div>
     `;
@@ -627,6 +635,16 @@ export class SanctuaryMenu {
     this.menuContainer.querySelectorAll('.sanctuary-tab-content').forEach(content => {
       content.classList.toggle('active', content.dataset.tab === tabId);
     });
+
+    // Load shopping UI dynamically if shopping tab is selected
+    if (tabId === 'shopping' && window.sanctuaryShoppingUI) {
+      const shoppingContent = document.getElementById('shopping-tab-content');
+      if (shoppingContent && !shoppingContent.hasAttribute('data-initialized')) {
+        shoppingContent.innerHTML = window.sanctuaryShoppingUI.generateTabContent();
+        window.sanctuaryShoppingUI.setupEventListeners();
+        shoppingContent.setAttribute('data-initialized', 'true');
+      }
+    }
   }
 
   /**
