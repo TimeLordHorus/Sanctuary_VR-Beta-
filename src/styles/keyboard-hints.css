@@ -1,0 +1,152 @@
+/**
+ * Keyboard Hints Styles
+ * Visual indicators for keyboard shortcuts
+ */
+
+.keyboard-hints {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9998;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+
+.keyboard-hints.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+  pointer-events: none;
+}
+
+.keyboard-hints-wrapper {
+  display: flex;
+  gap: 16px;
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 16px 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+.keyboard-hint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.keyboard-hint::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 2px;
+  height: 60%;
+  background: var(--hint-color, #6366f1);
+  transform: translateY(-50%);
+  opacity: 0.5;
+  border-radius: 1px;
+}
+
+.keyboard-hint:first-child::after {
+  display: none;
+}
+
+.hint-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  background: linear-gradient(135deg, var(--hint-color, #6366f1), rgba(139, 92, 246, 0.8));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s;
+}
+
+.keyboard-hint:hover .hint-key {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              0 0 20px var(--hint-color, #6366f1);
+}
+
+.hint-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.keyboard-hints-close {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border-radius: 50%;
+  color: white;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s;
+  pointer-events: auto;
+}
+
+.keyboard-hints-close:hover {
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+/* Animation for initial appearance */
+@keyframes hintPulse {
+  0%, 100% {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(99, 102, 241, 0.4);
+  }
+}
+
+.keyboard-hints-wrapper {
+  animation: hintPulse 3s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .keyboard-hints {
+    bottom: 80px;
+  }
+
+  .keyboard-hints-wrapper {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .keyboard-hint::after {
+    display: none;
+  }
+}
+
+/* Hide on print */
+@media print {
+  .keyboard-hints {
+    display: none;
+  }
+}

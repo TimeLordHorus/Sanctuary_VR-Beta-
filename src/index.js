@@ -16,6 +16,7 @@ import { VoiceUI } from './components/VoiceUI.js';
 import { ProgressionSystem } from './progression/ProgressionSystem.js';
 import { AchievementSystem } from './progression/AchievementSystem.js';
 import { SanctuaryMenu } from './core/SanctuaryMenu.js';
+import { KeyboardHint } from './components/KeyboardHint.js';
 
 class SanctuaryVR {
   constructor() {
@@ -32,6 +33,7 @@ class SanctuaryVR {
     this.progressionSystem = null;
     this.achievementSystem = null;
     this.sanctuaryMenu = null;
+    this.keyboardHint = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -95,6 +97,12 @@ class SanctuaryVR {
       // Initialize Sanctuary Menu (Q to open)
       this.sanctuaryMenu = new SanctuaryMenu(this.core);
       await this.sanctuaryMenu.init();
+
+      // Initialize Keyboard Hints
+      this.keyboardHint = new KeyboardHint();
+      if (this.keyboardHint.shouldShow()) {
+        this.keyboardHint.init();
+      }
 
       // Listen for game start events from HUD
       this.core.on('startGame', (data) => this.startGame(data));

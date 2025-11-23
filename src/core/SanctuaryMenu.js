@@ -537,20 +537,35 @@ export class SanctuaryMenu {
    * Setup keyboard controls
    */
   setupControls() {
-    document.addEventListener('keydown', (e) => {
+    // Use keydown with capture phase to ensure we get the event first
+    const keyHandler = (e) => {
       // Q key to toggle menu
       if (e.key === 'q' || e.key === 'Q') {
-        if (!['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+        // Don't trigger if typing in input/textarea or if any modifier keys are pressed
+        if (!['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) &&
+            !e.ctrlKey && !e.altKey && !e.metaKey) {
           e.preventDefault();
+          e.stopPropagation();
+          console.log('[SanctuaryMenu] Q key pressed - toggling menu');
           this.toggle();
         }
       }
 
       // ESC to close
       if (e.key === 'Escape' && this.isOpen) {
+        e.preventDefault();
+        e.stopPropagation();
         this.close();
       }
-    });
+    };
+
+    // Add event listener with capture phase
+    document.addEventListener('keydown', keyHandler, true);
+
+    // Store handler for cleanup
+    this.keyHandler = keyHandler;
+
+    console.log('[SanctuaryMenu] Keyboard controls initialized - Press Q to open menu');
   }
 
   /**
@@ -996,6 +1011,12 @@ export class SanctuaryMenu {
    */
   destroy() {
     this.stopAutoSave();
+
+    // Remove keyboard handler
+    if (this.keyHandler) {
+      document.removeEventListener('keydown', this.keyHandler, true);
+    }
+
     if (this.menuContainer) {
       this.menuContainer.remove();
     }
