@@ -26,6 +26,9 @@ import { TempleOfArtemis } from './scenes/TempleOfArtemis.js';
 import { ProceduralLandscape } from './world/ProceduralLandscape.js';
 import { ResourceSystem } from './world/ResourceSystem.js';
 import { PuzzleSystem } from './world/PuzzleSystem.js';
+import { KeyMappingSystem } from './input/KeyMappingSystem.js';
+import { LocalDataExchange } from './data/LocalDataExchange.js';
+import { QuestGenerator } from './quests/QuestGenerator.js';
 
 class SanctuaryVR {
   constructor() {
@@ -52,6 +55,9 @@ class SanctuaryVR {
     this.proceduralLandscape = null;
     this.resourceSystem = null;
     this.puzzleSystem = null;
+    this.keyMappingSystem = null;
+    this.localDataExchange = null;
+    this.questGenerator = null;
     this.initialized = false;
     this.gameStarted = false;
     this.bootCompleted = false;
@@ -180,6 +186,18 @@ class SanctuaryVR {
       this.proceduralLandscape = new ProceduralLandscape(this.core, scene);
       await this.proceduralLandscape.init();
 
+      // Initialize Key Mapping System
+      this.keyMappingSystem = new KeyMappingSystem(this.core);
+      await this.keyMappingSystem.init();
+
+      // Initialize Local Data Exchange System
+      this.localDataExchange = new LocalDataExchange(this.core);
+      await this.localDataExchange.init();
+
+      // Initialize Quest Generator (requires culturalGenerator and behavioralAnalytics)
+      this.questGenerator = new QuestGenerator(this.core, this.culturalGenerator, this.behavioralAnalytics);
+      await this.questGenerator.init();
+
       // Create floating particles in HUD background
       this.createHUDParticles();
 
@@ -209,6 +227,9 @@ class SanctuaryVR {
       window.resourceSystem = this.resourceSystem;
       window.puzzleSystem = this.puzzleSystem;
       window.proceduralLandscape = this.proceduralLandscape;
+      window.keyMappingSystem = this.keyMappingSystem;
+      window.localDataExchange = this.localDataExchange;
+      window.questGenerator = this.questGenerator;
 
       // Emit HUD ready event to trigger onboarding
       this.core.emit('hudReady');
@@ -393,6 +414,9 @@ class SanctuaryVR {
     if (this.knowledgeIndexer) this.knowledgeIndexer.destroy();
     if (this.behavioralAnalytics) this.behavioralAnalytics.destroy();
     if (this.culturalGenerator) this.culturalGenerator.destroy();
+    if (this.keyMappingSystem) this.keyMappingSystem.dispose();
+    if (this.localDataExchange) this.localDataExchange.dispose();
+    if (this.questGenerator) this.questGenerator.dispose();
     if (this.core) this.core.dispose();
     this.initialized = false;
     this.gameStarted = false;
